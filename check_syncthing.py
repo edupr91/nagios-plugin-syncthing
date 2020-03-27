@@ -86,8 +86,8 @@ def check_folder_lc(http_endpoint, headers):
         print(f'OK: all good with this/these folder(s) {folder_ok_str}')
         sys.exit(0)
 
-def check_devices(http_endpoint, headers):
 
+def check_devices(http_endpoint, headers):
     myID = get_id(http_endpoint, headers)
     url = f"{http_endpoint}/rest/stats/device"
     try:
@@ -115,13 +115,10 @@ def check_devices(http_endpoint, headers):
         current_time_10 = current_time - delta_time_10
         if current_time_10 > last_scan:
             device_critical += [device]
-            # status = 'critical'
         elif current_time_5 > last_scan:
             device_warning += [device]
-            status = 'warning'
         else:
             device_ok += [device]
-            status = 'ok'
 
     device_critical_len = len(device_critical)
     device_warning_len = len(device_warning)
@@ -138,8 +135,8 @@ def check_devices(http_endpoint, headers):
         print(f'OK: {device_ok_len} devices have been seen lately')
         sys.exit(0)
 
-def check_folder_status(http_endpoint, headers):
 
+def check_folder_status(http_endpoint, headers):
     url = f"{http_endpoint}/rest/stats/folder"
     try:
         resp = requests.get(url=url, headers=headers)
@@ -176,6 +173,7 @@ def check_folder_status(http_endpoint, headers):
         print(f"OK: All folders are 'UP to Date'")
         sys.exit(0)
 
+
 def action_to_do(action, http_endpoint, headers):
     if action == 'check_alive':
         check_status(http_endpoint, headers),
@@ -185,6 +183,7 @@ def action_to_do(action, http_endpoint, headers):
         check_folder_lc(http_endpoint, headers),
     elif action == 'check_folders_status':
         check_folder_status(http_endpoint, headers),
+
 
 action = args['action']
 if args['https']:
