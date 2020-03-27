@@ -12,14 +12,14 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('-H', '--host', required=True,
                     help='Syncthing Host')
 parser.add_argument('-X', '--api_key', required=True,
-                    help='Node REST API')
+                    help='Node API Key')
 parser.add_argument('-P', '--port', default='8384',
                     help='Syncthing Port')
 parser.add_argument('--https', default=False,
-                    help='Node REST API')
+                    help='Https flag')
 parser.add_argument('--action', default='check_alive',
                     choices=['check_alive', 'check_devices', 'check_last_scans', 'check_folders_status'],
-                    help='Check to do')
+                    help='Check to do, default check_alive')
 args = vars(parser.parse_args())
 
 
