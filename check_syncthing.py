@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Main Author
-#   - David Castañeda <edupr91@gmail.com>
+#   - David Castaneda <edupr91@gmail.com>
 
 import sys
 import argparse
@@ -18,7 +18,11 @@ parser.add_argument('-P', '--port', default='8384',
 parser.add_argument('--https', default=False,
                     help='Https flag')
 parser.add_argument('--action', default='check_alive',
-                    choices=['check_alive', 'check_devices', 'check_last_scans', 'check_folders_status'],
+                    choices=['check_alive',
+                             'check_devices',
+                             'check_last_scans',
+                             'check_folders_status'
+                             ],
                     help='Check to do, default check_alive')
 args = vars(parser.parse_args())
 
@@ -28,7 +32,7 @@ def check_status(http_endpoint, headers):
     try:
         resp = requests.get(url=url, headers=headers)
         data = resp.json()
-    except Exception as _ignored:
+    except Exception:
         print('CRITICAL: Error while getting Connection')
         sys.exit(2)
     print(f"OK: Syncthing is running.  {data['uptime']} secs uptime")
@@ -40,7 +44,7 @@ def get_id(http_endpoint, headers):
     try:
         resp = requests.get(url=url, headers=headers)
         data = resp.json()
-    except Exception as _ignored:
+    except Exception:
         print('CRITICAL: Error while getting Connection')
         sys.exit(2)
     return data['myID']
@@ -51,7 +55,7 @@ def check_folder_lc(http_endpoint, headers):
     try:
         resp = requests.get(url=url, headers=headers)
         data = resp.json()
-    except Exception as _ignored:
+    except Exception:
         print('CRITICAL: Error while getting Connection')
         sys.exit(2)
 
@@ -60,7 +64,9 @@ def check_folder_lc(http_endpoint, headers):
     folder_ok = []
     for folder in data:
         last_scan_str = data[folder]['lastScan'][:-4]
-        last_scan = datetime.datetime.strptime(last_scan_str, '%Y-%m-%dT%H:%M:%S.%f')
+        last_scan = datetime.datetime.strptime(
+            last_scan_str, '%Y-%m-%dT%H:%M:%S.%f'
+        )
         delta_time_70 = datetime.timedelta(minutes=70)
         delta_time_80 = datetime.timedelta(minutes=80)
         current_time = datetime.datetime.utcnow()
@@ -75,11 +81,15 @@ def check_folder_lc(http_endpoint, headers):
     separator = ', '
     if 0 != len(folder_critical):
         folder_critical_str = separator.join(folder_critical)
-        print(f'CRITICAL: we have this/these folder(s) with Errors {folder_critical_str}')
+        print(
+            f'CRITICAL: we have this/these folder(s) with Errors'
+            f'{folder_critical_str}')
         sys.exit(2)
     elif 0 != len(folder_warning):
         folder_warning_str = separator.join(folder_warning)
-        print(f'WARNING: we have this/these folder(s) with Errors {folder_warning_str}')
+        print(
+            f'WARNING: we have this/these folder(s) with Errors'
+            f' {folder_warning_str}')
         sys.exit(1)
     else:
         folder_ok_str = separator.join(folder_ok)
@@ -93,7 +103,7 @@ def check_devices(http_endpoint, headers):
     try:
         resp = requests.get(url=url, headers=headers)
         data = resp.json()
-    except Exception as _ignored:
+    except Exception:
         print('CRITICAL: Error while getting Connection')
         sys.exit(2)
 
@@ -106,7 +116,8 @@ def check_devices(http_endpoint, headers):
         if device == myID:
             continue
         last_scan_str = data[device]['lastSeen'][:-4]
-        last_scan = datetime.datetime.strptime(last_scan_str, '%Y-%m-%dT%H:%M:%S.%f')
+        last_scan = datetime.datetime.strptime(
+            last_scan_str, '%Y-%m-%dT%H:%M:%S.%f')
 
         delta_time_5 = datetime.timedelta(minutes=5)
         delta_time_10 = datetime.timedelta(minutes=10)
@@ -125,10 +136,12 @@ def check_devices(http_endpoint, headers):
     device_ok_len = len(device_ok)
 
     if 0 != device_critical_len:
-        print(f'CRITICAL: {device_critical_len} device(s) that haven\'t been seen in more than 10 min')
+        print(f'CRITICAL: {device_critical_len} device(s) that haven\'t '
+              f'been seen in more than 10 min')
         sys.exit(2)
     elif 0 != device_warning_len:
-        print(f'WARNING: {device_warning_len} device(s) that haven\'t been seen in the last 5 min')
+        print(f'WARNING: {device_warning_len} device(s) that haven\'t been '
+              f'seen in the last 5 min')
         sys.exit(1)
 
     else:
@@ -141,7 +154,7 @@ def check_folder_status(http_endpoint, headers):
     try:
         resp = requests.get(url=url, headers=headers)
         data = resp.json()
-    except Exception as _ignored:
+    except Exception:
         print('CRITICAL: Error while getting Connection')
         sys.exit(2)
 
